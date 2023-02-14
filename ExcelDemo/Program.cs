@@ -18,9 +18,11 @@ namespace ExcelDemo
         {
             DeleteIfExists(file);
 
-            using var package = new ExcelPackage(file); //tushunimcha filening open/closelariga javob beradi(excel file yaratdi)
+            //filening open/closelariga javob beradi(excel file yaratdi)
+            using var package = new ExcelPackage(file);
 
-            var workSheet = package.Workbook.Worksheets.Add("Mainreport");//mainreport nomi yangi sheet och(worksheet yaradi)
+            //mainreport nomi yangi sheet och(worksheet yaradi)
+            var workSheet = package.Workbook.Worksheets.Add("Mainreport");
 
             var range = workSheet.Cells["A1"].LoadFromCollection(people, true);
 
