@@ -12,6 +12,41 @@ namespace ExcelDemo
             var peopleList = GetSetupData();
 
             await SaveExcelFile(peopleList, excelFile);
+
+            List<PersonModel> peopleFromExcel = await LoadExcelFile(excelFile);
+
+            foreach(var person in peopleFromExcel)
+            {
+                Console.WriteLine($"{person.Id} {person.FirstName} {person.LastName}");
+            }
+        }
+
+        private static async Task<List<PersonModel>> LoadExcelFile(FileInfo file)
+        {
+            using var package = new ExcelPackage(file);
+
+            await package.LoadAsync(file);
+
+            //qaysi worksheet b-n ishlashni tanlaymiz(bu yerda 0-w.sh. tanlandi
+            var workSheet = package.Workbook.Worksheets[0];
+
+            int row = 2, col = 1;
+            List<PersonModel> people = new List<PersonModel>();
+
+            //tekshirilayotgan celldagi qiymat null yoki bo'sh bo'lganda sikl to'taydi(ya'ni ma'lumot tuagaganda)
+            while (string.IsNullOrEmpty(workSheet.Cells[row, col].Value?.ToString()) == false)
+            {
+                var person = new PersonModel();
+
+                person.Id = int.Parse(workSheet.Cells[row, col].Value.ToString());
+                person.FirstName = workSheet.Cells[row, col+1].Value.ToString();
+                person.LastName = workSheet.Cells[row, col+2].Value.ToString();
+
+                people.Add(person);
+                row++;
+            }
+
+            return people;
         }
 
         private static async Task SaveExcelFile(List<PersonModel> people, FileInfo file)
